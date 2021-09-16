@@ -1,0 +1,29 @@
+import boto3
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+client = boto3.client('ecs')
+
+
+def lambda_handler(event, context):
+    # Process own expected event
+    logger.info(event);
+    cluster = 'test';# cluster = event["cluster"]
+    service_name = 'delta-service'; #service_name = event["service_name"]
+
+    logger.info("Starting restart of {0} service in {1} cluster".format(service_name, cluster))
+    response = client.update_service(cluster=cluster, service=service_name,forceNewDeployment=True);
+    logger.info(response);
+    # response = client.list_tasks(cluster=cluster, family='ecs-def')
+    # tasks = response.get('taskArns', [])
+    # logger.info("Service is running {0} underlying tasks".format(len(tasks)))
+    # logger.info(response)
+    # logger.info(tasks)
+    # for task in tasks:
+    #     logger.info("Stopping tasks {0}".format(tasks))
+    #     client.stop_task(cluster=cluster, task=task)
+
+    logger.info("Completed service restart")
+    
+    
